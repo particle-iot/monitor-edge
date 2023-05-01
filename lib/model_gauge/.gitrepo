@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/particle-iot/model_gauge.git
+	branch = release/v1.0.0
+	commit = 2638875813c738449431337e9bbdcb6cfbd99e3f
+	parent = b4dbf35b9db82e003c0e53675d0af1b849f7c99b
+	method = merge
+	cmdver = 0.4.6

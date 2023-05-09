@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/particle-iot/model_gauge.git
-	branch = release/v1.0.0
-	commit = 2638875813c738449431337e9bbdcb6cfbd99e3f
-	parent = b4dbf35b9db82e003c0e53675d0af1b849f7c99b
+	branch = release/v1.0.1
+	commit = 09b4ee8336af3e8526fa4131f9ccf4f9cd493d72
+	parent = 121fcde480dee53784912df72997c27c912e6f4f
 	method = merge
 	cmdver = 0.4.6

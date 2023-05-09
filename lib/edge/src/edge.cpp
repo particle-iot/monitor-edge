@@ -348,26 +348,28 @@ void Edge::initBatteryMonitor() {
     // In order to disable charging safely we want to enable the PMIC watchdog so that
     // if anything happens during the procedure that the circuit can return to
     // normal operation in the event the MCU doesn't complete.
-    PMIC pmic(true);
-    FuelGauge fuelGauge;
-
-    pmic.setWatchdog(0x1); // 40 seconds
-    pmic.disableCharging();
-    // Delay so that the bulk capacitance and battery can equalize
-    delay(_commonCfgData.postChargeSettleTime);
 
     EdgeFuelGauge::instance().init();
+    {
+        PMIC pmic(true); // Acquire lock
+        FuelGauge fuelGauge;
 
-    fuelGauge.quickStart();
-    // Must delay at least 175ms after quickstart, before calling
-    // getSoC(), or reading will not have updated yet.
-    delay(200);
+        pmic.setWatchdog(0x1); // 40 seconds
+        pmic.disableCharging();
+        // Delay so that the bulk capacitance and battery can equalize
+        delay(_commonCfgData.postChargeSettleTime);
 
-    _forceDisableCharging = _deviceConfig.disableCharging();
-    if (_batterySafeToCharge && !_forceDisableCharging) {
-        pmic.enableCharging();
+        fuelGauge.quickStart();
+        // Must delay at least 175ms after quickstart, before calling
+        // getSoC(), or reading will not have updated yet.
+        delay(200);
+
+        _forceDisableCharging = _deviceConfig.disableCharging();
+        if (_batterySafeToCharge && !_forceDisableCharging) {
+            pmic.enableCharging();
+        }
+        pmic.disableWatchdog();
     }
-    pmic.disableWatchdog();
 }
 
 bool Edge::getChargeEnabled() {

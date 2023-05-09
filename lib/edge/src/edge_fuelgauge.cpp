@@ -45,7 +45,11 @@ static ModelGauge model_gauge(model_config_lg18650_1S4P);
 void EdgeFuelGauge::init()
 {
     // load model config when power on
-    model_gauge.load_config();
+    auto ret = model_gauge.load_config();
+    if (ModelGaugeStatus::NONE != ret) {
+        Log.error("Model gauge failed with %d", (int)ret);
+        return;
+    }
 
     /*
         Notify DVOS to switch SOC bits.

@@ -25,7 +25,7 @@
 #define MEMFAULT_PARTICLE_PORT_DEBUG_API_ENABLE         (1)
 
 // The name reported into Memfault for this application
-#define MEMFAULT_PARTICLE_PORT_SOFTWARE_TYPE            "tracker-edge"
+#define MEMFAULT_PARTICLE_PORT_SOFTWARE_TYPE            "monitor-edge"
 
 //! WARNING: Only uncomment this if the user wants to override default settings
 #define MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS        (60)

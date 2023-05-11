@@ -45,12 +45,11 @@ _(Note!  This FAQ isn't meant to be legal advice, if you're unsure, please consu
 This application must be built with device OS version 4.0.2 and above.
 
 1. Clone this repository `$ git clone git@github.com:particle-iot/monitor-edge.git && cd ./monitor-edge`
-2. Init & Update Submodules `$ git submodule update --init --recursive`
-3. Open Particle Workbench
-4. Run the `Particle: Import Project` command, follow the prompts, and wait for the project to load
-5. Run the `Particle: Configure Workspace for Device` command and select a compatible Device OS version and the `tracker` platform when prompted ([docs](https://docs.particle.io/tutorials/developer-tools/workbench/#cloud-build-and-flash))
-6. Connect your device
-7. Compile & Flash!
+2. Open Particle Workbench
+3. Run the `Particle: Import Project` command, follow the prompts, and wait for the project to load
+4. Run the `Particle: Configure Workspace for Device` command and select a compatible Device OS version and the `tracker` platform when prompted ([docs](https://docs.particle.io/tutorials/developer-tools/workbench/#cloud-build-and-flash))
+5. Connect your device
+6. Compile & Flash!
 
 ### CONTRIBUTE
 

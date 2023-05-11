@@ -38,7 +38,9 @@
 #endif // EDGE_USE_MEMFAULT
 #include "IEdgePlatformConfiguration.h"
 
-// !!!TODO!!! replace this header
+// !!!TODO!!!
+// * replace this header with more general purpose Monitor One one
+// * Handle the GnssLedEnable() and GnssLedInit() calls in model specific sources
 #include "monitor_one_gnss_led.h"
 
 //

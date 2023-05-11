@@ -24,11 +24,16 @@
 #include "edge.h"
 #include "StatisticCollector.h"
 #include "ThresholdComparator.h"
+#include "eeprom_helper.h"
 
 
 //
 // Constants
 //
+// !!!TODO!!!
+// * Consider moving constants into header file
+static constexpr uint8_t EEPROM_DATA_ADDRESS        {0x50};
+
 static constexpr int32_t THRESHOLD_LOW_PERCENT      {50L};
 static constexpr int32_t THRESHOLD_HIGH_PERCENT     {80L};
 static constexpr uint32_t LED_DISPLAY_PERIOD_MS     {10000UL};
@@ -234,29 +239,24 @@ static int commonMonitorOneSetup()
     return SYSTEM_ERROR_NONE;
 }
 
-// uint16_t rcurrent[256] {};
-// int rcurrentIndex {};
-// bool goCurrent {false};
-// bool doneCurrent {false};
-// char bufCurrent[4096] {};
-
+/**
+ * @brief Timer callback to collect and average ADC values.
+ *
+ */
 static void readAnalogInputs() {
+    // Perform averaging of the raw ADC values
     auto rawVoltage = analogRead(MONITOREDGE_IOEX_VOLTAGE_IN_PIN);
     voltageIn.pushValue((float)rawVoltage);
     auto rawCurrent = analogRead(MONITOREDGE_IOEX_CURRENT_IN_PIN);
     currentIn.pushValue((float)rawCurrent);
-    // if (goCurrent) {
-    //     if (rcurrentIndex < ARRAY_SIZE(rcurrent)) {
-    //         rcurrent[rcurrentIndex++] = (uint16_t)rawCurrent;
-    //         doneCurrent = false;
-    //     }
-    //     else {
-    //         goCurrent = false;
-    //         doneCurrent = true;
-    //     }
-    // }
 }
 
+/**
+ * @brief Helper function to decode thresholds
+ *
+ * @param state Enumerated value for threshold state
+ * @return String Corresponding string for given encoded state.
+ */
 static String readThresholdState(ThresholdState state) {
     switch (state) {
         case ThresholdState::AboveThreshold:
@@ -265,22 +265,6 @@ static String readThresholdState(ThresholdState state) {
             return "below";
     }
     return "unknown";
-}
-
-static String readVoltageLowThreshold() {
-    return readThresholdState(VoltageInLowThState);
-}
-
-static String readVoltageHighThreshold() {
-    return readThresholdState(VoltageInHighThState);
-}
-
-static String readCurrentLowThreshold() {
-    return readThresholdState(CurrentInLowThState);
-}
-
-static String readCurrentHighThreshold() {
-    return readThresholdState(CurrentInHighThState);
 }
 
 static Timer sampleTimer(ANALOG_SAMPLE_MS, readAnalogInputs);
@@ -317,21 +301,13 @@ static int expanderIO()
         return 0;
     }, nullptr);
 
-    // Particle.function("Go", [](String val){
-    //     auto n = val.toInt();
-    //     (void)n;
-    //     rcurrentIndex = 0;
-    //     goCurrent = true;
-    //     return 0;
-    // }, nullptr);
-
     Particle.variable("Voltage In", VoltageInValue);
     Particle.variable("Current In", CurrentInValue);
     Particle.variable("Digital In", DigitalInValue);
-    Particle.variable("Voltage Low Th", readVoltageLowThreshold);
-    Particle.variable("Voltage High Th", readVoltageHighThreshold);
-    Particle.variable("Current Low Th", readCurrentLowThreshold);
-    Particle.variable("Current High Th", readCurrentHighThreshold);
+    Particle.variable("Voltage Low Th", []{ return readThresholdState(VoltageInLowThState); });
+    Particle.variable("Voltage High Th", []{ return readThresholdState(VoltageInHighThState); });
+    Particle.variable("Current Low Th", []{ return readThresholdState(CurrentInLowThState); });
+    Particle.variable("Current High Th", []{ return readThresholdState(CurrentInHighThState); });
     Particle.variable("Current Low Fault", CurrentInFaultLowThState);
     Particle.variable("Current High Fault", CurrentInFaultHighThState);
 
@@ -520,10 +496,6 @@ static int expanderIO()
         }
     );
 
-    // !!!TODO!!!
-    // * Add config service settings for:
-    //    o Sampling attributes
-    //    o Thresholds
     return SYSTEM_ERROR_NONE;
 }
 
@@ -538,29 +510,38 @@ int user_init()
 {
     CHECK(commonMonitorOneSetup());
 
-    // !!!TODO!!! check EEPROM here
-    CHECK(expanderIO());
+    // !!!TODO!!!
+    // * check EEPROM here
+    // * Store SKU strings somewhere else
+    // ExpansionEeprom eeprom {};
+    // auto ret = readEepromBytes(Wire, EEPROM_DATA_ADDRESS, 0, (uint8_t*)&eeprom, sizeof(eeprom));
+    // if (ret || !isEeepromValid(eeprom)) {
+    //     monitorOneLog.error("This is not the card you are looking for");
+    //     return SYSTEM_ERROR_NOT_SUPPORTED;
+    // }
+    // if (!strcmp(eeprom.sku, "EXP1_IO_BASIC_485CAN")) {
+    //     monitorOneLog.info("Detected a basic IO expansion card with RS-485 and CAN bus");
+        CHECK(expanderIO());
+    // }
+    // else if (!strcmp(eeprom.sku, "EXP1_PROTO")) {
+    //     monitorOneLog.info("Detected a basic prototype expansion card");
+    //     // Do proto card stuff here
+    // }
+    // else {
+    //     return SYSTEM_ERROR_NOT_SUPPORTED;
+    // }
 
     return SYSTEM_ERROR_NONE;
 }
 
 int user_loop()
 {
-    // !!!TODO!!!
-    // * Adjust constants and put into header
-
-    // auto start = micros();
-    // auto rv = analogRead(MONITOREDGE_IOEX_VOLTAGE_IN_PIN);
-    // auto rc = analogRead(MONITOREDGE_IOEX_CURRENT_IN_PIN);
-    // auto stop = micros();
-    // auto rawVoltage = map((double)analogRead(MONITOREDGE_IOEX_VOLTAGE_IN_PIN), VOLTAGE_IN_LOW_BITS, VOLTAGE_IN_HIGH_BITS, 0.0, VOLTAGE_IN_FULL_SCALE);
-    // auto rawCurrent = map((double)analogRead(MONITOREDGE_IOEX_CURRENT_IN_PIN), CURRENT_IN_LOW_BITS, CURRENT_IN_HIGH_BITS, 0.0, CURRENT_IN_FULL_SCALE);
     auto rawVoltage = map((double)voltageIn.getAverage(), VOLTAGE_IN_LOW_BITS, VOLTAGE_IN_HIGH_BITS, 0.0, VOLTAGE_IN_FULL_SCALE);
     auto calibratedVoltage = (rawVoltage + voltageCalOffset) * voltageCalGain;
     VoltageInValue = map(calibratedVoltage, VOLTAGE_IN_LOW, VOLTAGE_IN_HIGH, voltageSensorLow, voltageSensorHigh);
     VoltageInLowThState = voltageLow.evaluate((float)VoltageInValue);
     VoltageInHighThState = voltageHigh.evaluate((float)VoltageInValue);
-    
+
     auto rawCurrent = map((double)currentIn.getAverage(), CURRENT_IN_LOW_BITS, CURRENT_IN_HIGH_BITS, 0.0, CURRENT_IN_FULL_SCALE);
     auto calibratedCurrent = (rawCurrent + currentCalOffset) * currentCalGain;
     CurrentInFaultLowThState = (currentFaultLow.evaluate((float)calibratedCurrent) == ThresholdState::BelowThreshold);
@@ -569,17 +550,5 @@ int user_loop()
     CurrentInLowThState = currentLow.evaluate((float)CurrentInValue);
     CurrentInHighThState = currentHigh.evaluate((float)CurrentInValue);
 
-    // if (doneCurrent) {
-    //     doneCurrent = false;
-    //     auto ptr = bufCurrent;
-    //     auto vptr = rcurrent;
-    //     for (int i = 0;i < ARRAY_SIZE(rcurrent);i += 8*sizeof(uint16_t)) {
-    //         //ptr += sprintf(ptr, "%04x%04x%04x%04x%04x%04x%04x%04x",
-    //         monitorOneLog.info("%u,%u,%u,%u,%u,%u,%u,%u,",
-    //             vptr[0], vptr[1], vptr[2], vptr[3], vptr[4], vptr[5], vptr[6], vptr[7]);
-    //         vptr += 8;
-    //     }
-    //     *(ptr++) = '\0';
-    // }
     return SYSTEM_ERROR_NONE;
 }

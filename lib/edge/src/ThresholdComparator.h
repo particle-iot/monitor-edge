@@ -58,6 +58,16 @@ enum class ThresholdState {
 };
 
 /**
+ * @brief Convenient states for publishing
+  */
+enum class ThresholdAlert {
+    None,
+    Above,
+    Below,
+    Both,
+};
+
+/**
  * @brief Inclusive limit options for thresholds.
  * The the equal is also considered if a threshold (plus hysteresis) is inclusive
  *    above = (value >= threshold), value is greater than or equal to the threshold
@@ -85,7 +95,7 @@ enum class ThresholdInitial {
 
 /**
  * @brief Event handler for threshold crossings.
- * 
+ *
  * @tparam T Type of the input value.
  * @param value The input value that triggered the event.
  * @param state The current threshold state.
@@ -95,7 +105,7 @@ using ThresholdEvent = std::function<void(T value, ThresholdState state)>;
 
 /**
  * @brief Class for comparing an input value to a threshold.
- * 
+ *
  * @tparam T Type of the input value.
  */
 template<typename T>
@@ -126,7 +136,7 @@ public:
 
     /**
      * @brief Set the threshold value.
-		 * 
+     *
      * @param threshold The new threshold value.
      */
     void setThreshold(T threshold) {
@@ -137,7 +147,7 @@ public:
 
     /**
      * @brief Get the current threshold value.
-		 * 
+     *
      * @return The current threshold value.
      */
     T getThreshold() const {
@@ -147,7 +157,7 @@ public:
 
     /**
      * @brief Set the hysteresis value.  This value must be positive.
-		 * 
+     *
      * @param hysteresis The new hysteresis value.
      */
     void setHysteresis(T hysteresis) {
@@ -163,7 +173,7 @@ public:
 
     /**
      * @brief Get the current hysteresis value.
-		 * 
+     *
      * @return The current hysteresis value.
      */
     T getHysteresis() const {
@@ -171,19 +181,19 @@ public:
         return _hysteresis;
     }
 
-		/**
-		 * @brief Set the threshold crossing callback function.
-		 * 
-		 * @param callback The callback function for threshold crossings.
-		 */
-		void setCallback(ThresholdEvent<T> callback) {
-				std::lock_guard<RecursiveMutex> lock(_mutex);
-				_thresholdMetCallback = callback;
-		}
+    /**
+     * @brief Set the threshold crossing callback function.
+     *
+     * @param callback The callback function for threshold crossings.
+     */
+    void setCallback(ThresholdEvent<T> callback) {
+        std::lock_guard<RecursiveMutex> lock(_mutex);
+        _thresholdMetCallback = callback;
+    }
 
     /**
      * @brief Set the inclusive limit options.
-		 * 
+     *
      * @param inclusive The new inclusive limit options.
      */
     void setInclusive(ThresholdInclusive inclusive) {
@@ -194,7 +204,7 @@ public:
 
     /**
      * @brief Get the current inclusive limit options.
-		 * 
+     *
      * @return The current inclusive limit options.
      */
     ThresholdInclusive getInclusive() const {
@@ -204,7 +214,7 @@ public:
 
     /**
      * @brief Evaluate the input value against the threshold.
-		 * 
+     *
      * @param inputValue The input value to compare against the threshold and hysteresis.
      * @return The current threshold state.
      */

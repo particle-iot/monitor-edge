@@ -30,3 +30,5 @@
 #define MONITOREDGE_IOEX_RS485_RX_PIN           (RX)
 #define MONITOREDGE_IOEX_RS485_TX_PIN           (TX)
 #define MONITOREDGE_IOEX_RS485_DE_PIN           (D4)
+
+constexpr char MONITOREDGE_IOEX_SKU[]           {"EXP1_IO_BASIC_485CAN"};

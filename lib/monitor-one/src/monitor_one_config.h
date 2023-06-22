@@ -17,6 +17,7 @@
 #pragma once
 
 #include "tracker_config.h"
+#include "IEdgePlatformConfiguration.h"
 #include "monitor_one_user_led.h"
 #include "Adp8866GnssLed.h"
 

@@ -9,6 +9,453 @@
 		"location"
 	],
 	"properties": {
+		"modbus_rs485": {
+			"$id": "#/properties/modbus_rs485",
+			"type": "object",
+			"title": "Modbus RS-485",
+			"description": "Configuration for Modbus RTU with RS-485.",
+			"default": {},
+			"properties": {
+				"baud": {
+					"$id": "#/properties/modbus_rs485/baud",
+					"type": "string",
+					"title": "RS-485 Baud",
+					"description": "Baud rate to operate the RS-485 bus.",
+					"default": "38400",
+					"enum": [
+						"1200",
+						"2400",
+						"4800",
+						"9600",
+						"19200",
+						"28800",
+						"38400",
+						"57600",
+						"76800",
+						"115200"
+					]
+				},
+				"parity": {
+					"$id": "#/properties/modbus_rs485/parity",
+					"type": "string",
+					"title": "RS-485 Parity Bits",
+					"description": "Specifies partiy type used for the RS-485 bus.",
+					"default": "none",
+					"enum": [
+						"none",
+						"even"
+					]
+				},
+				"imd": {
+					"$id": "#/properties/modbus_rs485/imd",
+					"type": "integer",
+					"title": "Modbus Inter Message Delay",
+					"description": "Delay between the last Modbus response and the next transmission in milliseconds.  This is used for rate limiting transactions.",
+					"default": "0",
+					"minimum": 0,
+					"maximum": 10000
+				}
+			}
+		},
+		"modbus1": {
+			"$id": "#/properties/modbus1",
+			"type": "object",
+			"title": "Modbus Polling 1",
+			"description": "Configuration for polling a Modbus server ID.",
+			"default": {},
+			"properties": {
+				"enable": {
+					"$id": "#/properties/modbus1/enable",
+					"type": "boolean",
+					"title": "Modbus Server Enable",
+					"description": "If enabled, poll the given Modbus server address.",
+					"default": false,
+					"examples": [
+						true
+					]
+				},
+				"id": {
+					"$id": "#/properties/modbus1/id",
+					"type": "integer",
+					"title": "Modbus Server ID",
+					"description": "The remote device server ID (also known as slave ID). Range: 1-255.",
+					"default": 1,
+					"minimum": 1,
+					"maximum": 255
+				},
+				"timeout": {
+					"$id": "#/properties/modbus1/timeout",
+					"type": "integer",
+					"title": "Modbus Timeout",
+					"description": "Allowable time to wait for a response in milliseconds. Range: 0-10000.",
+					"default": 2000,
+					"minimum": 0,
+					"maximum": 10000
+				},
+				"poll": {
+					"$id": "#/properties/modbus1/poll",
+					"type": "integer",
+					"title": "Polling Interval",
+					"description": "Defines the frequency (in seconds) in which the register will be polled and results published.",
+					"default": 1,
+					"minimum": 1
+				},
+				"publish": {
+					"$id": "#/properties/modbus1/publish",
+					"type": "string",
+					"title": "Publish polled value",
+					"description": "Select when to publish the polled value.",
+					"default": "always",
+					"enum": [
+						"always"
+					]
+				},
+				"function": {
+					"$id": "#/properties/modbus1/function",
+					"type": "string",
+					"title": "Modbus Function",
+					"description": "Type of read function.",
+					"default": "coil",
+					"enum": [
+						"coil",
+						"discrete_input",
+						"input_register",
+						"holding_register"
+					]
+				},
+				"address": {
+					"$id": "#/properties/modbus1/address",
+					"type": "integer",
+					"title": "Register Address",
+					"description": "Address to read from, zero based. Range: 0-65535.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"type": {
+					"$id": "#/properties/modbus1/type",
+					"type": "string",
+					"title": "Modbus data type",
+					"description": "Type of data being read.",
+					"default": "uint16",
+					"enum": [
+						"int16",
+						"uint16",
+						"int32",
+						"uint32",
+						"float32_abcd",
+						"float32_badc",
+						"float32_cdab",
+						"float32_dcba",
+						"bits"
+					]
+				},
+				"mask": {
+					"$id": "#/properties/modbus1/mask",
+					"type": "integer",
+					"title": "Mask Value",
+					"description": "16-bit bitmask to apply to read value to isolate bits. Use 65535 if masking is not required. Range: 0-65535.",
+					"default": 65535,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"shift": {
+					"$id": "#/properties/modbus1/shift",
+					"type": "integer",
+					"title": "Shift Value",
+					"description": "Shifting, in bits, to right shift read value after masking. Use 0 if shifting is not required. Range: 0-15.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 15
+				},
+				"offset": {
+					"$id": "#/properties/modbus1/offset",
+					"type": "number",
+					"title": "Offset Value",
+					"description": "Offset applied to masked and shifted input. This represents “b” in “y = mx + b”. Use 0 if not required (float variable).",
+					"default": 0.0,
+					"examples": [
+						0.5
+					]
+				},
+				"scale": {
+					"$id": "#/properties/modbus1/scale",
+					"type": "number",
+					"title": "Scaling Value",
+					"description": "Scaling applied to masked and shifted input. This represents “m” in “y = mx + b”. Use 1 if not required (float variable).",
+					"default": 1.0,
+					"examples": [
+						10.0
+					]
+				}
+			}
+		},
+		"modbus2": {
+			"$id": "#/properties/modbus2",
+			"type": "object",
+			"title": "Modbus Polling 2",
+			"description": "Configuration for polling a Modbus server ID.",
+			"default": {},
+			"properties": {
+				"enable": {
+					"$id": "#/properties/modbus2/enable",
+					"type": "boolean",
+					"title": "Modbus Server Enable",
+					"description": "If enabled, poll the given Modbus server address.",
+					"default": false,
+					"examples": [
+						true
+					]
+				},
+				"id": {
+					"$id": "#/properties/modbus2/id",
+					"type": "integer",
+					"title": "Modbus Server ID",
+					"description": "The remote device server ID (also known as slave ID). Range: 1-255.",
+					"default": 1,
+					"minimum": 1,
+					"maximum": 255
+				},
+				"timeout": {
+					"$id": "#/properties/modbus2/timeout",
+					"type": "integer",
+					"title": "Modbus Timeout",
+					"description": "Allowable time to wait for a response in milliseconds. Range: 0-10000.",
+					"default": 2000,
+					"minimum": 0,
+					"maximum": 10000
+				},
+				"poll": {
+					"$id": "#/properties/modbus2/poll",
+					"type": "integer",
+					"title": "Polling Interval",
+					"description": "Defines the frequency (in seconds) in which the register will be polled and results published.",
+					"default": 1,
+					"minimum": 1
+				},
+				"publish": {
+					"$id": "#/properties/modbus2/publish",
+					"type": "string",
+					"title": "Publish polled value",
+					"description": "Select when to publish the polled value.",
+					"default": "always",
+					"enum": [
+						"always"
+					]
+				},
+				"function": {
+					"$id": "#/properties/modbus2/function",
+					"type": "string",
+					"title": "Modbus Function",
+					"description": "Type of read function.",
+					"default": "coil",
+					"enum": [
+						"coil",
+						"discrete_input",
+						"input_register",
+						"holding_register"
+					]
+				},
+				"address": {
+					"$id": "#/properties/modbus2/address",
+					"type": "integer",
+					"title": "Register Address",
+					"description": "Address to read from, zero based. Range: 0-65535.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"type": {
+					"$id": "#/properties/modbus2/type",
+					"type": "string",
+					"title": "Modbus data type",
+					"description": "Type of data being read.",
+					"default": "uint16",
+					"enum": [
+						"int16",
+						"uint16",
+						"int32",
+						"uint32",
+						"float32_abcd",
+						"float32_badc",
+						"float32_cdab",
+						"float32_dcba",
+						"bits"
+					]
+				},
+				"mask": {
+					"$id": "#/properties/modbus2/mask",
+					"type": "integer",
+					"title": "Mask Value",
+					"description": "16-bit bitmask to apply to read value to isolate bits. Use 65535 if masking is not required. Range: 0-65535.",
+					"default": 65535,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"shift": {
+					"$id": "#/properties/modbus2/shift",
+					"type": "integer",
+					"title": "Shift Value",
+					"description": "Shifting, in bits, to right shift read value after masking. Use 0 if shifting is not required. Range: 0-15.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 15
+				},
+				"offset": {
+					"$id": "#/properties/modbus2/offset",
+					"type": "number",
+					"title": "Offset Value",
+					"description": "Offset applied to masked and shifted input. This represents “b” in “y = mx + b”. Use 0 if not required (float variable).",
+					"default": 0.0,
+					"examples": [
+						0.5
+					]
+				},
+				"scale": {
+					"$id": "#/properties/modbus2/scale",
+					"type": "number",
+					"title": "Scaling Value",
+					"description": "Scaling applied to masked and shifted input. This represents “m” in “y = mx + b”. Use 1 if not required (float variable).",
+					"default": 1.0,
+					"examples": [
+						10.0
+					]
+				}
+			}
+		},
+		"modbus3": {
+			"$id": "#/properties/modbus3",
+			"type": "object",
+			"title": "Modbus Polling 3",
+			"description": "Configuration for polling a Modbus server ID.",
+			"default": {},
+			"properties": {
+				"enable": {
+					"$id": "#/properties/modbus3/enable",
+					"type": "boolean",
+					"title": "Modbus Server Enable",
+					"description": "If enabled, poll the given Modbus server address.",
+					"default": false,
+					"examples": [
+						true
+					]
+				},
+				"id": {
+					"$id": "#/properties/modbus3/id",
+					"type": "integer",
+					"title": "Modbus Server ID",
+					"description": "The remote device server ID (also known as slave ID). Range: 1-255.",
+					"default": 1,
+					"minimum": 1,
+					"maximum": 255
+				},
+				"timeout": {
+					"$id": "#/properties/modbus3/timeout",
+					"type": "integer",
+					"title": "Modbus Timeout",
+					"description": "Allowable time to wait for a response in milliseconds. Range: 0-10000.",
+					"default": 2000,
+					"minimum": 0,
+					"maximum": 10000
+				},
+				"poll": {
+					"$id": "#/properties/modbus3/poll",
+					"type": "integer",
+					"title": "Polling Interval",
+					"description": "Defines the frequency (in seconds) in which the register will be polled and results published.",
+					"default": 1,
+					"minimum": 1
+				},
+				"publish": {
+					"$id": "#/properties/modbus3/publish",
+					"type": "string",
+					"title": "Publish polled value",
+					"description": "Select when to publish the polled value.",
+					"default": "always",
+					"enum": [
+						"always"
+					]
+				},
+				"function": {
+					"$id": "#/properties/modbus3/function",
+					"type": "string",
+					"title": "Modbus Function",
+					"description": "Type of read function.",
+					"default": "coil",
+					"enum": [
+						"coil",
+						"discrete_input",
+						"input_register",
+						"holding_register"
+					]
+				},
+				"address": {
+					"$id": "#/properties/modbus3/address",
+					"type": "integer",
+					"title": "Register Address",
+					"description": "Address to read from, zero based. Range: 0-65535.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"type": {
+					"$id": "#/properties/modbus3/type",
+					"type": "string",
+					"title": "Modbus data type",
+					"description": "Type of data being read.",
+					"default": "uint16",
+					"enum": [
+						"int16",
+						"uint16",
+						"int32",
+						"uint32",
+						"float32_abcd",
+						"float32_badc",
+						"float32_cdab",
+						"float32_dcba",
+						"bits"
+					]
+				},
+				"mask": {
+					"$id": "#/properties/modbus3/mask",
+					"type": "integer",
+					"title": "Mask Value",
+					"description": "16-bit bitmask to apply to read value to isolate bits. Use 65535 if masking is not required. Range: 0-65535.",
+					"default": 65535,
+					"minimum": 0,
+					"maximum": 65535
+				},
+				"shift": {
+					"$id": "#/properties/modbus3/shift",
+					"type": "integer",
+					"title": "Shift Value",
+					"description": "Shifting, in bits, to right shift read value after masking. Use 0 if shifting is not required. Range: 0-15.",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 15
+				},
+				"offset": {
+					"$id": "#/properties/modbus3/offset",
+					"type": "number",
+					"title": "Offset Value",
+					"description": "Offset applied to masked and shifted input. This represents “b” in “y = mx + b”. Use 0 if not required (float variable).",
+					"default": 0.0,
+					"examples": [
+						0.5
+					]
+				},
+				"scale": {
+					"$id": "#/properties/modbus3/scale",
+					"type": "number",
+					"title": "Scaling Value",
+					"description": "Scaling applied to masked and shifted input. This represents “m” in “y = mx + b”. Use 1 if not required (float variable).",
+					"default": 1.0,
+					"examples": [
+						10.0
+					]
+				}
+			}
+		},
 		"io": {
 			"$id": "#/properties/io",
 			"type": "object",

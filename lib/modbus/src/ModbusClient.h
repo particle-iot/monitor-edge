@@ -63,6 +63,22 @@ enum class ModbusType
   HoldingRegister,                            ///< Holding register
 };
 
+/**
+ * @brief Enums to help with 4-byte endian conversion for floating point numbers.
+ * The Particle platforms operate with little endian byte order when storing numbers.
+ * Modbus is supposed to be a big endian word order protocol but each server implementation
+ * may have a different way to read out 32-bit floating point values which probably depends
+ * on the embedded controller employed in the remote peice of equipment.
+ * 
+ */
+enum class ModbusFloatEndianess
+{
+  ABCD,                                       ///< All bytes and words are in big endian order
+  BADC,                                       ///< Bytes are in little endian, words are in big endian order
+  CDAB,                                       ///< Bytes are in big endian, words are in little endian order
+  DCBA,                                       ///< All bytes and words are in little endian order
+};
+
 struct ModbusClientContext {
   uint16_t writeBuffer[ku8MaxBufferSize];     ///< buffer containing data to transmit to Modbus server; set via SetTransmitBuffer()
   uint16_t writeAddress;                      ///< server register to which to write
@@ -560,6 +576,21 @@ class ModbusClient
      */
     uint8_t  readWriteMultipleRegisters(uint8_t id, uint16_t u16ReadAddress, uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty, ModbusClientContext& context);
 
+    /**
+     * @brief Swap two bytes in a 16-bit word.
+     *
+     * @param hi Most significant byte
+     * @param lo Least significant byte
+     * @return uint16_t Combined 16-bit word.
+     */
+    static inline uint16_t swapBytes(uint16_t word)
+    {
+      uint8_t* bytes = (uint8_t*)&word;
+      uint8_t swap = bytes[1];
+      bytes[1] = bytes[0];
+      bytes[0] = swap;
+      return word;
+    }
 
     /**
      * @brief Pack two bytes into a 16-bit word.
@@ -626,22 +657,42 @@ class ModbusClient
      *
      * @param word0 First ordered word from register
      * @param word1 Second ordered word from register
-     * @param littleEndian Use little endian word order to form number; otherwise, use big endian word order
+     * @param endian Specify byte and word endian orders
      * @return float Combined 32-bit floating point number.
      */
-    static inline float wordsToFloat(uint16_t word0, uint16_t word1, bool littleEndian = false)
+    static inline float wordsToFloat(uint16_t word0, uint16_t word1, ModbusFloatEndianess endian = ModbusFloatEndianess::CDAB)
     {
       float val {};
       uint16_t* pval = (uint16_t*)&val;
-      if (littleEndian)
+      switch (endian)
       {
-        pval[0] = word0;
-        pval[1] = word1;
-      }
-      else
-      {
-        pval[0] = word1;
-        pval[1] = word0;
+        case ModbusFloatEndianess::ABCD:
+          // Word[0] has bytes A*256 + B, word[1] has bytes C*256 + D
+          // Big endian word order and normal byte order
+          pval[0] = word1;
+          pval[1] = word0;
+          break;
+
+        case ModbusFloatEndianess::BADC:
+          // Word[0] has bytes B*256 + A, word[1] has bytes D*256 + C
+          // Big endian word order and swapped byte order
+          pval[0] = swapBytes(word1);
+          pval[1] = swapBytes(word0);
+          break;
+
+        case ModbusFloatEndianess::CDAB:
+          // Word[0] has bytes C*256 + D, word[1] has bytes A*256 + B
+          // Little endian word order and normal byte order
+          pval[0] = word0;
+          pval[1] = word1;
+          break;
+
+        case ModbusFloatEndianess::DCBA:
+          // Word[0] has bytes D*256 + C, word[1] has bytes B*256 + A
+          // Little endian word order and swapped byte order
+          pval[0] = swapBytes(word0);
+          pval[1] = swapBytes(word1);
+          break;
       }
       return val;
     }
@@ -652,20 +703,40 @@ class ModbusClient
      * @param value Combined 32-bit floating point number
      * @param word0 First ordered word to register
      * @param word1 Second ordered word to register
-     * @param littleEndian Use little endian word order to form number; otherwise, use big endian word order
+     * @param endian Specify byte and word endian orders
      */
-    static inline void floatToWords(float value, uint16_t& word0, uint16_t& word1, bool littleEndian = false)
+    static inline void floatToWords(float value, uint16_t& word0, uint16_t& word1, ModbusFloatEndianess endian = ModbusFloatEndianess::CDAB)
     {
       uint16_t* pval = (uint16_t*)&value;
-      if (littleEndian)
+      switch (endian)
       {
-        word0 = pval[0];
-        word1 = pval[1];
-      }
-      else
-      {
-        word1 = pval[0];
-        word0 = pval[1];
+        case ModbusFloatEndianess::ABCD:
+          // Word[0] has bytes A*256 + B, word[1] has bytes C*256 + D
+          // Big endian word order and normal byte order
+          word1 = pval[0];
+          word0 = pval[1];
+          break;
+
+        case ModbusFloatEndianess::BADC:
+          // Word[0] has bytes B*256 + A, word[1] has bytes D*256 + C
+          // Big endian word order and swapped byte order
+          word1 = swapBytes(pval[0]);
+          word0 = swapBytes(pval[1]);
+          break;
+
+        case ModbusFloatEndianess::CDAB:
+          // Word[0] has bytes C*256 + D, word[1] has bytes A*256 + B
+          // Little endian word order and normal byte order
+          word0 = pval[0];
+          word1 = pval[1];
+          break;
+
+        case ModbusFloatEndianess::DCBA:
+          // Word[0] has bytes D*256 + C, word[1] has bytes B*256 + A
+          // Little endian word order and swapped byte order
+          word0 = swapBytes(pval[0]);
+          word1 = swapBytes(pval[1]);
+          break;
       }
     }
 

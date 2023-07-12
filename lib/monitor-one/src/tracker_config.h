@@ -102,6 +102,6 @@
 
 #define MONITORONE_ADP8866_I2C_INSTANCE         (Wire)
 #define MONITORONE_ADP8866_I2C_ADDR             (0x27)
-#define MONITORONE_ADP8866_RESETN_PIN           (NFC_PIN1)
+#define MONITORONE_INT_PIN                      (NFC_PIN1)
 
 //#define RTC_WDT_DISABLE

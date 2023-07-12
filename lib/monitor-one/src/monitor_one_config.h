@@ -40,6 +40,8 @@ public:
         commonCfg.chargeCurrentHigh = 1536; // milliamps
         commonCfg.inputCurrent = 2048; // milliamps
 
+        pinMode(MONITORONE_INT_PIN, INPUT_PULLUP);
+
         // Configure User LED
         if(MonitorOneUserLed::instance().init() == SYSTEM_ERROR_NONE)
         {

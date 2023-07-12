@@ -222,10 +222,6 @@ static void buttonHandler(DebounceSwitchState* switchState, void *context)
  */
 static int commonMonitorOneSetup()
 {
-    // Make sure the ADP8866 is taken out of reset
-    pinMode(MONITORONE_ADP8866_RESETN_PIN, OUTPUT);
-    digitalWrite(MONITORONE_ADP8866_RESETN_PIN, HIGH);
-
     // Set up a timer to restore LED behaviour after a button press
     RestoreTmr = new Timer(LED_DISPLAY_PERIOD_MS, defaultLedBehaviour, true);
 

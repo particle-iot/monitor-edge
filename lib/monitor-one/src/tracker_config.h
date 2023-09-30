@@ -48,7 +48,7 @@
 #endif
 
 #ifndef EDGE_PRODUCT_VERSION
-#define EDGE_PRODUCT_VERSION                    (1)
+#define EDGE_PRODUCT_VERSION                    (2)
 #endif
 
 #if ( (SYSTEM_VERSION < SYSTEM_VERSION_ALPHA(5, 0, 0, 1)) && (PLATFORM_ID == PLATFORM_TRACKER) )

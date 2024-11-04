@@ -12,7 +12,9 @@ integrations: [ "qcom-aware" ]
 hardwareDependencies:
   - name: Monitor One
     link: https://www.particle.io/devices/monitor-one/
+    tags: [ "Monitor One" ]
   - name: Particle T-SoM Module
     link: https://www.particle.io/tracker-som/
+    tags: [ "T-SoM" ]
 description: |
   A soup to nuts Equipment Monitoring solution containing location services, a myridiad of power modes and configuration capabilities.

@@ -1,0 +1,18 @@
+id: particle/monitor-edge
+category: solution
+icon: particle.png
+gitrepo: https://github.com/particle-iot/monitor-edge
+name: "Monitor Edge"
+shortDescription: "A complete Equipment Monitoring solution"
+version: 1.2.0
+models: []
+language: [ "C++" ]
+cloudServices: [ ]
+integrations: [ "qcom-aware" ]
+hardwareDependencies:
+  - name: Monitor One
+    link: https://www.particle.io/devices/monitor-one/
+  - name: Particle T-SoM Module
+    link: https://www.particle.io/tracker-som/
+description: |
+  A soup to nuts Equipment Monitoring solution containing location services, a myridiad of power modes and configuration capabilities.

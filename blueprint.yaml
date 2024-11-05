@@ -3,11 +3,11 @@ category: solution
 icon: particle.png
 gitrepo: https://github.com/particle-iot/monitor-edge
 name: "Monitor Edge"
-shortDescription: "A complete Equipment Monitoring solution"
+shortDescription: "A complete equipment monitoring solution"
 version: 1.2.0
 models: []
 language: [ "C++" ]
-cloudServices: [ ]
+cloudServices: [ "Integrations", "Logic", "Ledger", "Lake" ]
 integrations: [ "qcom-aware" ]
 hardwareDependencies:
   - name: Monitor One
@@ -17,4 +17,11 @@ hardwareDependencies:
     link: https://www.particle.io/tracker-som/
     tags: [ "T-SoM" ]
 description: |
-  A soup to nuts Equipment Monitoring solution containing location services, a myridiad of power modes and configuration capabilities.
+  Monitor Edge provides a comprehensive software suite for equipment monitoring, featuring advanced tracking, remote management, and seamless integration with the Particle IoT platform.
+
+  Key Software Features:
+  - Location Fusion Technology: Uses advanced Location Fusion to integrate Wi-Fi, GNSS, and cellular data sources, offering accurate location tracking even in complex environments.
+  - Configurable Event Triggers and Data Publishing: Customizable publish rates and event-based triggers ensure efficient data flow and responsiveness to key operational metrics.
+  - Remote Management and OTA Updates: Supports seamless remote software updates and management, enabling quick response to security vulnerabilities, feature updates, and application changes.
+  - Comprehensive Data Integration and Management: Leverages Particle’s Integrations, Logic, Ledger, and Lake for reliable data handling, event logging, and efficient data pipeline management.
+  - Edge-Optimized Data Processing: Includes local data storage and processing capabilities with store-and-forward features to prevent data loss during connectivity outages.

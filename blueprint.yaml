@@ -1,10 +1,10 @@
 id: particle/monitor-edge
 slug: particle-monitor-edge
-type: solution
+type: Solution
 category: "Reference applications"
-expertiseLevel: "expert"
-tags: ["tracker", "sensors", "industrial"]
-icon: assets/particle-logo.svg
+expertiseLevel: "Expert"
+tags: ["Tracker", "Sensors", "Industrial"]
+icon: assets/monitor-edge.svg
 gitrepo: https://github.com/particle-iot/monitor-edge
 name: "Monitor Edge"
 shortDescription: "A complete equipment monitoring solution"

@@ -1,7 +1,7 @@
 slug: particle-monitor-edge
 type: Solution
 category: "Reference applications"
-expertiseLevel: "Expert"
+expertiseLevel: "Intermediate"
 tags: ["Tracker", "Sensors", "Industrial"]
 icon: assets/monitor-edge.svg
 gitrepo: https://github.com/particle-iot/monitor-edge

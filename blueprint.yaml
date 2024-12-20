@@ -1,4 +1,3 @@
-id: particle/monitor-edge
 slug: particle-monitor-edge
 type: Solution
 category: "Reference applications"
@@ -26,6 +25,12 @@ hardwareDependencies:
   - name: Supported device
 introduction: |
   Application reference firmware for the Particle Monitor One.
+  
+  Monitor One can be used in three different ways:
+  - Completely off-the-shelf. With its cloud-based configuration, you can use the firmware as-is with no modifications in some cases.
+  - Semi-custom. The Monitor Edge firmware is customizable on-device making it possible to add new sensors and customize behavior while still making it easy to upgrade the base firmware.
+  - Custom. Edit the Monitor Edge firmware so you can duplicate and modify it for completely custom applications.
+
 description: |
   Monitor Edge provides a comprehensive software suite for equipment monitoring, featuring advanced tracking, remote management, and seamless integration with the Particle IoT platform.
 

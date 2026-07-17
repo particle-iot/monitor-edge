@@ -17,7 +17,11 @@
 #include "Particle.h"
 #include "edge.h"
 
-SYSTEM_THREAD(ENABLED);
+// SYSTEM_THREAD(ENABLED) is default on 6.2.0+ and will be fully deprecated in
+// future, only specify on older versions to resolve deprecation warning
+#if SYSTEM_VERSION < SYSTEM_VERSION_DEFAULT(6, 2, 0)
+    SYSTEM_THREAD(ENABLED);
+#endif
 SYSTEM_MODE(SEMI_AUTOMATIC);
 
 #if EDGE_PRODUCT_NEEDED

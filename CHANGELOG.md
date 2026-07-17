@@ -1,3 +1,15 @@
+### COMPATIBILTY
+
+Must be built using device OS v4.0.2 or greater.
+
+### FEATURES
+
+- Update deprecated Watchdog APIs for Device OS 6.4.0 and above.
+
+### ENHANCEMENTS
+
+- Source can be built for Device OS >= 6.4.0.
+
 ## v2
 
 ### COMPATIBILTY

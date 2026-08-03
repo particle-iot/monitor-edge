@@ -29,7 +29,7 @@ void ctrl_request_custom_handler(ctrl_request* req)
     if (Edge::instance().isUsbCommandEnabled())
     {
         String command(req->request_data, req->request_size);
-        if (CloudService::instance().dispatchCommand(command))
+        if (CloudService::instance().dispatchCommand(command) == 0)
         {
             result = SYSTEM_ERROR_NONE;
         }
@@ -235,17 +235,41 @@ int Edge::initIo()
 
 void Edge::enableWatchdog(bool enable) {
 #ifndef RTC_WDT_DISABLE
-    if (enable) {
-        // watchdog at 1 minute
-        hal_exrtc_enable_watchdog(_commonCfgData.watchdogExpireTime, nullptr);
-        hal_exrtc_feed_watchdog(nullptr);
-    }
-    else {
-        hal_exrtc_disable_watchdog(nullptr);
-    }
+    #if SYSTEM_VERSION >= SYSTEM_VERSION_DEFAULT(6, 4, 0)
+        if (enable) {
+            ExternalWatchdog.init(WatchdogConfiguration().timeout(_commonCfgData.watchdogExpireTime));
+            if (!ExternalWatchdog.started()) {
+                ExternalWatchdog.start();
+            }
+        }
+        else {
+            if (ExternalWatchdog.started()) {
+                ExternalWatchdog.stop();
+            }
+        }
+    #else
+        if (enable) {
+            hal_exrtc_enable_watchdog(_commonCfgData.watchdogExpireTime, nullptr);
+            feedWatchdog();
+        }
+        else {
+            hal_exrtc_disable_watchdog(nullptr);
+        }
+    #endif
+
 #else
     (void)enable;
 #endif // RTC_WDT_DISABLE
+}
+
+void Edge::feedWatchdog() {
+#ifndef RTC_WDT_DISABLE
+    #if SYSTEM_VERSION >= SYSTEM_VERSION_DEFAULT(6, 4, 0)
+        ExternalWatchdog.refresh();
+    #else
+        hal_exrtc_feed_watchdog(nullptr);
+    #endif
+#endif
 }
 
 void Edge::startShippingMode() {
@@ -697,9 +721,8 @@ void Edge::loop()
     {
         _lastLoopSec = cur_sec;
 
-#ifndef RTC_WDT_DISABLE
-        hal_exrtc_feed_watchdog(nullptr);
-#endif
+        feedWatchdog();
+
     }
 
     EdgeFuelGauge::instance().loop();

@@ -402,11 +402,16 @@ class Edge {
         }
 
         /**
-         * @brief Enable or disable application watchdog
+         * @brief Enable or disable external application watchdog
          *
          * @param enable
          */
         void enableWatchdog(bool enable);
+
+        /**
+         * @brief Feed the external application watchdog.
+         */
+        void feedWatchdog();
 
         /**
          * @brief Invoke shipping mode

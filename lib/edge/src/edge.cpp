@@ -23,6 +23,9 @@
 #include "edge_fuelgauge.h"
 #include "monitor_one_config.h"
 
+constexpr system_tick_t EdgePowerConfigLogDelayMs = 10000;
+constexpr unsigned EdgePowerConfigLogCount = 3;
+
 void ctrl_request_custom_handler(ctrl_request* req)
 {
     auto result = SYSTEM_ERROR_NOT_SUPPORTED;
@@ -269,6 +272,28 @@ void Edge::feedWatchdog() {
     #else
         hal_exrtc_feed_watchdog(nullptr);
     #endif
+#endif
+}
+
+void Edge::logPowerConfig(unsigned sample) {
+    // Read back what the power manager actually programmed into the PMIC.
+    {
+        PMIC pmic(true);
+        Log.info("power config [%u/%u]: input current limit %u mA, charge current %u mA, input voltage limit %u mV",
+            sample, EdgePowerConfigLogCount,
+            (unsigned)pmic.getInputCurrentLimit(),
+            (unsigned)pmic.getChargeCurrentValue(),
+            (unsigned)pmic.getInputVoltageLimit());
+    }
+
+#if SYSTEM_VERSION >= SYSTEM_VERSION_DEFAULT(6, 5, 0)
+    // Requested values, so an override that was rejected as out of range is
+    // distinguishable from one that was applied.
+    int inputCurrent = 0;
+    int chargeCurrent = 0;
+    Log.info("power env: PARTICLE_PMIC_INPUT_CURRENT %s, PARTICLE_PMIC_CHARGE_CURRENT %s",
+        System.getEnv("PARTICLE_PMIC_INPUT_CURRENT", inputCurrent) ? String(inputCurrent).c_str() : "unset",
+        System.getEnv("PARTICLE_PMIC_CHARGE_CURRENT", chargeCurrent) ? String(chargeCurrent).c_str() : "unset");
 #endif
 }
 
@@ -723,6 +748,17 @@ void Edge::loop()
 
         feedWatchdog();
 
+    }
+
+    // Log the power configuration a few times after init(). Reading it during
+    // init() catches the PMIC before its input source detection has settled.
+    static system_tick_t powerLogAt = millis() + EdgePowerConfigLogDelayMs;
+    static unsigned powerLogCount = 0;
+    if ((powerLogCount < EdgePowerConfigLogCount) && (millis() >= powerLogAt))
+    {
+        powerLogCount++;
+        powerLogAt = millis() + EdgePowerConfigLogDelayMs;
+        logPowerConfig(powerLogCount);
     }
 
     EdgeFuelGauge::instance().loop();

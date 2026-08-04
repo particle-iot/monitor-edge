@@ -414,6 +414,13 @@ class Edge {
         void feedWatchdog();
 
         /**
+         * @brief Log the PMIC settings applied by the system power manager.
+         *
+         * @param sample 1-based index of this sample
+         */
+        void logPowerConfig(unsigned sample);
+
+        /**
          * @brief Invoke shipping mode
          *
          */
